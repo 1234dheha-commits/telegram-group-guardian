@@ -9,7 +9,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Пользователи', icon: Users, path: 'Users' },
     { name: 'Репорты', icon: AlertCircle, path: 'Reports' },
     { name: 'Логи действий', icon: Activity, path: 'ActivityLog' },
-    { name: 'Настройки', icon: Settings, path: 'Settings' }
+    { name: 'Настройки', icon: Settings, path: 'Settings' },
+    { name: 'Настройка бота', icon: Settings, path: 'BotSetup' }
   ];
 
   return (

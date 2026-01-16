@@ -28,35 +28,67 @@ export default function Users() {
 
   const actionMutation = useMutation({
     mutationFn: async ({ action, user }) => {
-      const currentUser = await base44.auth.me();
-      
-      // Create moderation action log
-      await base44.entities.ModerationAction.create({
-        action_type: action,
-        target_telegram_id: user.telegram_id,
-        target_username: user.username,
-        moderator_name: currentUser.full_name,
-        reason: reason,
-        duration: duration
-      });
+      // Получить Chat ID из конфигурации
+      const configs = await base44.entities.BotConfig.filter({ is_active: true });
+      const chat_id = configs.length > 0 ? configs[0].chat_id : '';
 
-      // Update user status
-      let updateData = {};
-      if (action === 'ban') {
-        updateData = { status: 'banned' };
-      } else if (action === 'kick') {
-        updateData = { status: 'kicked' };
-      } else if (action === 'mute') {
-        updateData = { status: 'restricted', muted_until: duration };
-      } else if (action === 'warn') {
-        updateData = { warnings: (user.warnings || 0) + 1 };
-      } else if (action === 'unmute') {
-        updateData = { status: 'active', muted_until: null };
-      } else if (action === 'unban') {
-        updateData = { status: 'active' };
+      if (!chat_id) {
+        throw new Error('Chat ID не настроен. Перейдите в "Настройка бота"');
       }
 
-      await base44.entities.TelegramUser.update(user.id, updateData);
+      // Вызов backend функций для реальных действий
+      let response;
+      if (action === 'ban') {
+        response = await base44.functions.invoke('banUser', {
+          telegram_user_id: user.telegram_id,
+          chat_id: chat_id,
+          reason: reason,
+          duration: duration
+        });
+      } else if (action === 'kick') {
+        response = await base44.functions.invoke('kickUser', {
+          telegram_user_id: user.telegram_id,
+          chat_id: chat_id,
+          reason: reason
+        });
+      } else if (action === 'mute') {
+        // Преобразование длительности в секунды (простой пример)
+        const duration_seconds = duration.includes('день') ? parseInt(duration) * 86400 : 
+                               duration.includes('час') ? parseInt(duration) * 3600 : 0;
+        response = await base44.functions.invoke('muteUser', {
+          telegram_user_id: user.telegram_id,
+          chat_id: chat_id,
+          reason: reason,
+          duration_seconds: duration_seconds
+        });
+      } else if (action === 'unmute') {
+        response = await base44.functions.invoke('unmuteUser', {
+          telegram_user_id: user.telegram_id,
+          chat_id: chat_id
+        });
+      } else if (action === 'unban') {
+        response = await base44.functions.invoke('unbanUser', {
+          telegram_user_id: user.telegram_id,
+          chat_id: chat_id
+        });
+      } else if (action === 'warn') {
+        // Для предупреждения просто обновляем локально
+        const currentUser = await base44.auth.me();
+        await base44.entities.ModerationAction.create({
+          action_type: 'warn',
+          target_telegram_id: user.telegram_id,
+          target_username: user.username,
+          moderator_name: currentUser.full_name,
+          reason: reason
+        });
+        await base44.entities.TelegramUser.update(user.id, {
+          warnings: (user.warnings || 0) + 1
+        });
+      }
+
+      if (response && !response.data.success) {
+        throw new Error(response.data.error || 'Ошибка выполнения действия');
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['telegram-users'] });

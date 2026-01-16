@@ -35,13 +35,46 @@ export default function Reports() {
       });
 
       if (action && action !== 'none') {
-        await base44.entities.ModerationAction.create({
-          action_type: action,
-          target_telegram_id: selectedReport.telegram_user_id,
-          moderator_name: currentUser.full_name,
-          reason: `Репорт: ${selectedReport.reason}`,
-          details: notes
-        });
+        // Получить Chat ID из конфигурации
+        const configs = await base44.entities.BotConfig.filter({ is_active: true });
+        const chat_id = configs.length > 0 ? configs[0].chat_id : selectedReport.chat_id;
+
+        // Вызов соответствующей функции
+        if (action === 'delete_message' && selectedReport.message_id) {
+          await base44.functions.invoke('deleteMessage', {
+            chat_id: chat_id,
+            message_id: selectedReport.message_id,
+            reason: notes
+          });
+        } else if (action === 'ban') {
+          await base44.functions.invoke('banUser', {
+            telegram_user_id: selectedReport.telegram_user_id,
+            chat_id: chat_id,
+            reason: `Репорт: ${selectedReport.reason}`,
+            duration: 'навсегда'
+          });
+        } else if (action === 'mute') {
+          await base44.functions.invoke('muteUser', {
+            telegram_user_id: selectedReport.telegram_user_id,
+            chat_id: chat_id,
+            reason: `Репорт: ${selectedReport.reason}`,
+            duration_seconds: 86400 // 1 день
+          });
+        } else if (action === 'kick') {
+          await base44.functions.invoke('kickUser', {
+            telegram_user_id: selectedReport.telegram_user_id,
+            chat_id: chat_id,
+            reason: `Репорт: ${selectedReport.reason}`
+          });
+        } else if (action === 'warn') {
+          await base44.entities.ModerationAction.create({
+            action_type: 'warn',
+            target_telegram_id: selectedReport.telegram_user_id,
+            moderator_name: currentUser.full_name,
+            reason: `Репорт: ${selectedReport.reason}`,
+            details: notes
+          });
+        }
       }
     },
     onSuccess: () => {
