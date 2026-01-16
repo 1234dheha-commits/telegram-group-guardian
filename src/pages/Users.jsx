@@ -178,8 +178,21 @@ export default function Users() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id} className="border-[#2a2a2a] hover:bg-[#1a1a1a]">
+                {filteredUsers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-12">
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center">
+                          <Search className="w-6 h-6 text-[#666]" />
+                        </div>
+                        <p className="text-[#a0a0a0]">Пользователи не найдены</p>
+                        <p className="text-[#666] text-sm">Добавьте бота в группу для синхронизации</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredUsers.map((user) => (
+                  <TableRow key={user.id} className="border-[#2a2a2a] hover:bg-[#1a1a1a] transition-colors duration-150">
                     <TableCell className="text-white">
                       <div>
                         <p className="font-medium">{user.first_name} {user.last_name}</p>
@@ -249,7 +262,8 @@ export default function Users() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>

@@ -65,35 +65,46 @@ export default function Dashboard() {
         <CardContent>
           <div className="space-y-3">
             {actions.length === 0 ? (
-              <p className="text-[#a0a0a0] text-center py-8">Нет действий</p>
-            ) : (
-              actions.map((action) => (
-                <div
-                  key={action.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a]"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-2 h-2 rounded-full bg-[#3b82f6]" />
-                    <div>
-                      <p className="text-white font-medium">
-                        {action.action_type === 'ban' && '🚫 Бан'}
-                        {action.action_type === 'kick' && '👢 Кик'}
-                        {action.action_type === 'warn' && '⚠️ Предупреждение'}
-                        {action.action_type === 'mute' && '🔇 Мут'}
-                        {action.action_type === 'unmute' && '🔊 Размут'}
-                        {action.action_type === 'unban' && '✅ Разбан'}
-                        {action.action_type === 'delete_message' && '🗑️ Удалено сообщение'}
-                      </p>
-                      <p className="text-[#a0a0a0] text-sm">
-                        {action.target_username || action.target_telegram_id} • {action.moderator_name}
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-[#a0a0a0] text-sm">
-                    {format(new Date(action.created_date), 'dd MMM, HH:mm', { locale: ru })}
-                  </span>
+              <div className="text-center py-12">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] mb-3">
+                  <Activity className="w-6 h-6 text-[#666]" />
                 </div>
-              ))
+                <p className="text-[#a0a0a0] text-sm">Действия появятся после модерации</p>
+              </div>
+            ) : (
+              actions.map((action) => {
+                const actionLabels = {
+                  ban: 'Бан',
+                  kick: 'Кик',
+                  warn: 'Предупреждение',
+                  mute: 'Мут',
+                  unmute: 'Размут',
+                  unban: 'Разбан',
+                  delete_message: 'Удалено сообщение'
+                };
+                
+                return (
+                  <div
+                    key={action.id}
+                    className="flex items-center justify-between p-4 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] hover:border-[#3a3a3a] transition-all duration-200 hover:translate-x-1"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-2 h-2 rounded-full bg-[#3b82f6] animate-pulse" />
+                      <div>
+                        <p className="text-white font-medium">
+                          {actionLabels[action.action_type] || action.action_type}
+                        </p>
+                        <p className="text-[#a0a0a0] text-sm">
+                          {action.target_username || action.target_telegram_id} • {action.moderator_name}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[#a0a0a0] text-sm">
+                      {format(new Date(action.created_date), 'dd MMM, HH:mm', { locale: ru })}
+                    </span>
+                  </div>
+                );
+              })
             )}
           </div>
         </CardContent>

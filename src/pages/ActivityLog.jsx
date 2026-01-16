@@ -28,17 +28,17 @@ export default function ActivityLog() {
     return matchesSearch && matchesAction;
   });
 
-  const getActionIcon = (actionType) => {
-    const icons = {
-      ban: '🚫',
-      kick: '👢',
-      warn: '⚠️',
-      mute: '🔇',
-      unmute: '🔊',
-      unban: '✅',
-      delete_message: '🗑️'
+  const getActionColor = (actionType) => {
+    const colors = {
+      ban: 'bg-red-500',
+      kick: 'bg-orange-500',
+      warn: 'bg-yellow-500',
+      mute: 'bg-purple-500',
+      unmute: 'bg-green-500',
+      unban: 'bg-blue-500',
+      delete_message: 'bg-gray-500'
     };
-    return icons[actionType] || '📝';
+    return colors[actionType] || 'bg-gray-500';
   };
 
   const getActionLabel = (actionType) => {
@@ -95,25 +95,28 @@ export default function ActivityLog() {
           {/* Timeline */}
           <div className="space-y-3">
             {filteredActions.length === 0 ? (
-              <p className="text-[#a0a0a0] text-center py-8">Нет действий</p>
+              <div className="text-center py-16">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] mb-4">
+                  <Activity className="w-8 h-8 text-[#a0a0a0]" />
+                </div>
+                <p className="text-[#a0a0a0]">Пока нет действий модерации</p>
+                <p className="text-[#666] text-sm mt-2">Действия появятся здесь после первой модерации</p>
+              </div>
             ) : (
               filteredActions.map((action, index) => (
                 <div
                   key={action.id}
-                  className="relative pl-8 pb-6 last:pb-0"
+                  className="relative pl-8 pb-6 last:pb-0 transition-all duration-300 hover:translate-x-1"
                 >
-                  {/* Timeline line */}
                   {index !== filteredActions.length - 1 && (
-                    <div className="absolute left-[11px] top-8 bottom-0 w-px bg-[#2a2a2a]" />
+                    <div className="absolute left-[11px] top-8 bottom-0 w-px bg-gradient-to-b from-[#2a2a2a] to-transparent" />
                   )}
                   
-                  {/* Timeline dot */}
-                  <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-[#1a1a1a] border-2 border-[#3b82f6] flex items-center justify-center text-xs">
-                    {getActionIcon(action.action_type)}
+                  <div className={`absolute left-0 top-1 w-6 h-6 rounded-full ${getActionColor(action.action_type)} flex items-center justify-center shadow-lg transition-transform hover:scale-110`}>
+                    <div className="w-2 h-2 rounded-full bg-white" />
                   </div>
                   
-                  {/* Content */}
-                  <div className="p-4 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a]">
+                  <div className="p-4 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] hover:bg-[#1f1f1f] transition-all duration-200">
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <h3 className="text-white font-medium">

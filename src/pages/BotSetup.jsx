@@ -76,29 +76,53 @@ export default function BotSetup() {
         <p className="text-[#a0a0a0]">Подключите Telegram бота к вашей группе</p>
       </div>
 
-      {/* Инструкция */}
-      <Card className="bg-[#141414] border-[#2a2a2a]">
+      {/* Быстрая настройка */}
+      <Card className="bg-gradient-to-br from-[#1a1a1a] to-[#141414] border-[#3b82f6] shadow-lg shadow-[#3b82f6]/20">
         <CardHeader>
-          <CardTitle className="text-white">📋 Инструкция по настройке</CardTitle>
+          <CardTitle className="text-white flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#3b82f6] animate-pulse" />
+            Подключение бота
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 text-[#a0a0a0]">
-          <div className="space-y-2">
-            <h3 className="text-white font-medium">1. Добавьте бота в группу</h3>
-            <p>• Откройте вашу группу в Telegram</p>
-            <p>• Добавьте бота через меню "Добавить участников"</p>
-            <p>• Выдайте боту права администратора</p>
-          </div>
-          
-          <div className="space-y-2">
-            <h3 className="text-white font-medium">2. Получите Chat ID группы</h3>
-            <p>• Перешлите любое сообщение из группы боту @userinfobot</p>
-            <p>• Скопируйте Chat ID из ответа (выглядит как -100xxxxxxxxxx)</p>
+        <CardContent className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-4">
+            <a 
+              href="https://t.me/telegram_grop_moderator_test_bot"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-4 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] hover:border-[#3b82f6] transition-all duration-200 group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#3b82f6] flex items-center justify-center">
+                  <span className="text-lg">→</span>
+                </div>
+                <div>
+                  <h3 className="text-white font-medium group-hover:text-[#3b82f6] transition-colors">Открыть бота</h3>
+                  <p className="text-[#a0a0a0] text-sm">Перейти в Telegram</p>
+                </div>
+              </div>
+            </a>
+
+            <div className="p-4 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#10b981] flex items-center justify-center">
+                  <span className="text-lg">✓</span>
+                </div>
+                <div>
+                  <h3 className="text-white font-medium">Выдайте права</h3>
+                  <p className="text-[#a0a0a0] text-sm">Сделайте бота админом</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <h3 className="text-white font-medium">3. Настройте вебхук</h3>
-            <p>• Скопируйте URL вебхука ниже</p>
-            <p>• Нажмите кнопку "Установить вебхук"</p>
+          <div className="p-4 rounded-lg bg-[#0a0a0a] border border-[#2a2a2a]">
+            <p className="text-[#a0a0a0] text-sm leading-relaxed">
+              <strong className="text-white">Шаг 1:</strong> Откройте бота и нажмите "Start"<br/>
+              <strong className="text-white">Шаг 2:</strong> Добавьте бота в вашу группу<br/>
+              <strong className="text-white">Шаг 3:</strong> Выдайте права администратора<br/>
+              <strong className="text-white">Шаг 4:</strong> Вернитесь сюда и заполните данные ниже
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -106,7 +130,7 @@ export default function BotSetup() {
       {/* Настройка вебхука */}
       <Card className="bg-[#141414] border-[#2a2a2a]">
         <CardHeader>
-          <CardTitle className="text-white">🔗 Настройка вебхука</CardTitle>
+          <CardTitle className="text-white">Настройка вебхука</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -126,8 +150,8 @@ export default function BotSetup() {
                 <Copy className="w-4 h-4" />
               </Button>
             </div>
-            <p className="text-[#a0a0a0] text-sm mt-2">
-              Найдите реальный URL функции в Dashboard → Code → Functions → telegramWebhook
+            <p className="text-[#666] text-sm mt-2">
+              Вебхук настроится автоматически для обработки событий группы
             </p>
           </div>
 
@@ -151,7 +175,7 @@ export default function BotSetup() {
       {/* Chat ID */}
       <Card className="bg-[#141414] border-[#2a2a2a]">
         <CardHeader>
-          <CardTitle className="text-white">💬 ID группы</CardTitle>
+          <CardTitle className="text-white">ID группы</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -162,8 +186,8 @@ export default function BotSetup() {
               placeholder="-100xxxxxxxxxx"
               className="bg-[#1a1a1a] border-[#2a2a2a] text-white"
             />
-            <p className="text-[#a0a0a0] text-sm mt-2">
-              Используется для выполнения модерационных действий
+            <p className="text-[#666] text-sm mt-2">
+              Получите Chat ID через @userinfobot - перешлите туда сообщение из группы
             </p>
           </div>
 
@@ -208,8 +232,8 @@ export default function BotSetup() {
       {chatId && (
         <Card className="bg-[#141414] border-[#2a2a2a]">
           <CardContent className="p-4 space-y-4">
-            <p className="text-[#a0a0a0] text-sm">
-              💡 Совет: Сохраните Chat ID ({chatId}) для использования в модерации
+            <p className="text-[#666] text-sm">
+              Сохраните Chat ID ({chatId}) для использования в модерации
             </p>
             <Button
               onClick={async () => {

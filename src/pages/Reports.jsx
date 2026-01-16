@@ -129,12 +129,18 @@ export default function Reports() {
         <CardContent>
           <div className="space-y-3">
             {reports.length === 0 ? (
-              <p className="text-[#a0a0a0] text-center py-8">Нет репортов</p>
+              <div className="text-center py-16">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] mb-4">
+                  <AlertCircle className="w-8 h-8 text-[#a0a0a0]" />
+                </div>
+                <p className="text-[#a0a0a0]">Пока нет репортов</p>
+                <p className="text-[#666] text-sm mt-2">Пользователи могут отправлять жалобы через команду /report</p>
+              </div>
             ) : (
               reports.map((report) => (
                 <div
                   key={report.id}
-                  className="p-4 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] hover:border-[#3a3a3a] transition-all cursor-pointer"
+                  className="p-4 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] hover:border-[#3b82f6] transition-all duration-200 cursor-pointer transform hover:scale-[1.01]"
                   onClick={() => setSelectedReport(report)}
                 >
                   <div className="flex items-start justify-between mb-3">
