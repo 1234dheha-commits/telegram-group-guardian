@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
+const BOT_TOKEN = '8508894388:AAGjHxsxYOVuwjwIXfr79ZniMqiMAr8ELhw';
+
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
@@ -10,14 +12,8 @@ Deno.serve(async (req) => {
         }
 
         const { chat_id, message_id, reason } = await req.json();
-        const token = Deno.env.get('TELEGRAM_BOT_TOKEN');
 
-        if (!token) {
-            return Response.json({ error: 'TELEGRAM_BOT_TOKEN not configured' }, { status: 400 });
-        }
-
-        // Удаление сообщения
-        const response = await fetch(`https://api.telegram.org/bot${token}/deleteMessage`, {
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/deleteMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -26,21 +22,20 @@ Deno.serve(async (req) => {
             })
         });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (!result.ok) {
-            return Response.json({ error: result.description }, { status: 400 });
+        if (data.ok) {
+            await base44.asServiceRole.entities.ModerationAction.create({
+                action_type: 'delete_message',
+                moderator_name: user.full_name,
+                reason: reason || 'Удалено модератором',
+                details: `Chat: ${chat_id}, Message: ${message_id}`
+            });
+
+            return Response.json({ success: true });
+        } else {
+            return Response.json({ success: false, error: data.description });
         }
-
-        // Лог действия
-        await base44.entities.ModerationAction.create({
-            action_type: 'delete_message',
-            moderator_name: user.full_name,
-            reason: reason || 'Не указана',
-            details: `Удалено сообщение ${message_id} в чате ${chat_id}`
-        });
-
-        return Response.json({ success: true, message: 'Сообщение удалено' });
     } catch (error) {
         return Response.json({ error: error.message }, { status: 500 });
     }

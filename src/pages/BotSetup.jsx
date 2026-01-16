@@ -14,10 +14,8 @@ export default function BotSetup() {
   const [isLoading, setIsLoading] = useState(false);
   const [setupStatus, setSetupStatus] = useState(null);
 
-  // URL вебхука (нужно заменить на реальный домен вашего приложения)
   const getWebhookUrl = () => {
-    // Получаем URL функции из dashboard
-    return 'https://your-app-domain.base44.run/functions/telegramWebhook';
+    return window.location.origin + '/api/functions/telegramWebhook';
   };
 
   const handleSetupWebhook = async () => {
@@ -72,7 +70,7 @@ export default function BotSetup() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-4 md:space-y-6 max-w-4xl w-full">
       <div>
         <h1 className="text-3xl font-bold text-white mb-2">Настройка бота</h1>
         <p className="text-[#a0a0a0]">Подключите Telegram бота к вашей группе</p>

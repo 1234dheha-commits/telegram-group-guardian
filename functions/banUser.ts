@@ -1,5 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
+const BOT_TOKEN = '8508894388:AAGjHxsxYOVuwjwIXfr79ZniMqiMAr8ELhw';
+
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
@@ -10,14 +12,8 @@ Deno.serve(async (req) => {
         }
 
         const { telegram_user_id, chat_id, reason, duration } = await req.json();
-        const token = Deno.env.get('TELEGRAM_BOT_TOKEN');
 
-        if (!token) {
-            return Response.json({ error: 'TELEGRAM_BOT_TOKEN not configured' }, { status: 400 });
-        }
-
-        // Вызов Telegram API для бана
-        const response = await fetch(`https://api.telegram.org/bot${token}/banChatMember`, {
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/banChatMember`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -26,33 +22,32 @@ Deno.serve(async (req) => {
             })
         });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (!result.ok) {
-            return Response.json({ error: result.description }, { status: 400 });
-        }
-
-        // Обновление базы данных
-        const users = await base44.entities.TelegramUser.filter({
-            telegram_id: telegram_user_id
-        });
-
-        if (users.length > 0) {
-            await base44.entities.TelegramUser.update(users[0].id, {
-                status: 'banned'
+        if (data.ok) {
+            const users = await base44.asServiceRole.entities.TelegramUser.filter({
+                telegram_id: telegram_user_id
             });
+
+            if (users.length > 0) {
+                await base44.asServiceRole.entities.TelegramUser.update(users[0].id, {
+                    status: 'banned'
+                });
+            }
+
+            await base44.asServiceRole.entities.ModerationAction.create({
+                action_type: 'ban',
+                target_telegram_id: telegram_user_id,
+                target_username: users[0]?.username || '',
+                moderator_name: user.full_name,
+                reason: reason || 'Нарушение правил',
+                duration: duration || ''
+            });
+
+            return Response.json({ success: true });
+        } else {
+            return Response.json({ success: false, error: data.description });
         }
-
-        // Лог действия
-        await base44.entities.ModerationAction.create({
-            action_type: 'ban',
-            target_telegram_id: telegram_user_id,
-            moderator_name: user.full_name,
-            reason: reason || 'Не указана',
-            duration: duration || 'навсегда'
-        });
-
-        return Response.json({ success: true, message: 'Пользователь забанен' });
     } catch (error) {
         return Response.json({ error: error.message }, { status: 500 });
     }

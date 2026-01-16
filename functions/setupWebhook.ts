@@ -1,39 +1,37 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
+const BOT_TOKEN = '8508894388:AAGjHxsxYOVuwjwIXfr79ZniMqiMAr8ELhw';
+
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         const user = await base44.auth.me();
 
-        if (user?.role !== 'admin') {
-            return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+        if (!user) {
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const { url } = await req.json();
-        const token = Deno.env.get('8508894388:AAGjHxsxYOVuwjwIXfr79ZniMqiMAr8ELhw');
 
-        if (!token) {
-            return Response.json({ error: 'TELEGRAM_BOT_TOKEN not configured' }, { status: 400 });
-        }
-
-        // Установка вебхука
-        const response = await fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/setWebhook`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url })
         });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (!result.ok) {
-            return Response.json({ error: result.description }, { status: 400 });
+        if (data.ok) {
+            return Response.json({
+                success: true,
+                message: 'Вебхук успешно установлен'
+            });
+        } else {
+            return Response.json({
+                success: false,
+                error: data.description || 'Ошибка установки вебхука'
+            });
         }
-
-        return Response.json({ 
-            success: true, 
-            message: 'Webhook установлен успешно',
-            webhook_url: url 
-        });
     } catch (error) {
         return Response.json({ error: error.message }, { status: 500 });
     }

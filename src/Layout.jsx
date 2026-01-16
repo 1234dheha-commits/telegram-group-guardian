@@ -38,7 +38,7 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
       
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-screen w-64 bg-[#141414] border-r border-[#2a2a2a]">
+      <aside className="fixed left-0 top-0 h-screen w-64 bg-[#141414] border-r border-[#2a2a2a] z-50 max-md:hidden">
         <div className="p-6">
           <h1 className="text-2xl font-bold text-white mb-8">TG Moderator</h1>
           <nav className="space-y-2">
@@ -65,8 +65,8 @@ export default function Layout({ children, currentPageName }) {
       </aside>
 
       {/* Main content */}
-      <main className="ml-64 min-h-screen">
-        <div className="p-8">
+      <main className="ml-64 min-h-screen max-md:ml-0">
+        <div className="p-4 md:p-8">
           {children}
         </div>
       </main>

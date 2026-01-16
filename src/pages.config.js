@@ -1,19 +1,19 @@
-import Dashboard from './pages/Dashboard';
-import Users from './pages/Users';
-import Reports from './pages/Reports';
 import ActivityLog from './pages/ActivityLog';
-import Settings from './pages/Settings';
 import BotSetup from './pages/BotSetup';
+import Dashboard from './pages/Dashboard';
+import Reports from './pages/Reports';
+import Settings from './pages/Settings';
+import Users from './pages/Users';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Dashboard": Dashboard,
-    "Users": Users,
-    "Reports": Reports,
     "ActivityLog": ActivityLog,
-    "Settings": Settings,
     "BotSetup": BotSetup,
+    "Dashboard": Dashboard,
+    "Reports": Reports,
+    "Settings": Settings,
+    "Users": Users,
 }
 
 export const pagesConfig = {
