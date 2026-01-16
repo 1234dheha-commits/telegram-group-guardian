@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 // Получаем токен из переменных окружения
-const BOT_TOKEN = Deno.env.get('BOT_TOKEN');
+const BOT_TOKEN = Deno.env.get('8508894388:AAGjHxsxYOVuwjwIXfr79ZniMqiMAr8ELhw');
 
 // Универсальная функция для ответа с CORS и JSON
 function jsonResponse(data, { status = 200 } = {}) {
