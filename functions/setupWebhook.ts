@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
         }
 
         const { url } = await req.json();
-        const token = Deno.env.get('TELEGRAM_BOT_TOKEN');
+        const token = Deno.env.get('8508894388:AAGjHxsxYOVuwjwIXfr79ZniMqiMAr8ELhw');
 
         if (!token) {
             return Response.json({ error: 'TELEGRAM_BOT_TOKEN not configured' }, { status: 400 });
