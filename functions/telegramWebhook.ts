@@ -1,9 +1,31 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
+    // Обработка GET запросов для проверки работоспособности
+    if (req.method === 'GET') {
+        return Response.json({ status: 'ok' });
+    }
+
+    // Разрешены только GET и POST
+    if (req.method !== 'POST') {
+        return Response.json({ error: 'Method not allowed' }, { status: 405 });
+    }
+
     try {
         const base44 = createClientFromRequest(req);
-        const update = await req.json();
+        
+        // Безопасный парсинг JSON с валидацией
+        let update;
+        try {
+            update = await req.json();
+        } catch (parseError) {
+            return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+        }
+
+        // Валидация входящих данных
+        if (!update || typeof update !== 'object') {
+            return Response.json({ error: 'Invalid update format' }, { status: 400 });
+        }
 
         // Обработка новых участников
         if (update.message?.new_chat_members) {
