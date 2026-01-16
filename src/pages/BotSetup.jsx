@@ -209,10 +209,32 @@ export default function BotSetup() {
       {/* Сохранение Chat ID */}
       {chatId && (
         <Card className="bg-[#141414] border-[#2a2a2a]">
-          <CardContent className="p-4">
+          <CardContent className="p-4 space-y-4">
             <p className="text-[#a0a0a0] text-sm">
-              💡 Совет: Сохраните Chat ID ({chatId}) в настройках модерации для удобства
+              💡 Совет: Сохраните Chat ID ({chatId}) для использования в модерации
             </p>
+            <Button
+              onClick={async () => {
+                try {
+                  const configs = await base44.entities.BotConfig.filter({ is_active: true });
+                  if (configs.length > 0) {
+                    await base44.entities.BotConfig.update(configs[0].id, { chat_id: chatId });
+                  } else {
+                    await base44.entities.BotConfig.create({ 
+                      chat_id: chatId,
+                      webhook_url: webhookUrl || getWebhookUrl(),
+                      is_active: true 
+                    });
+                  }
+                  toast.success('Конфигурация сохранена');
+                } catch (error) {
+                  toast.error('Ошибка сохранения');
+                }
+              }}
+              className="bg-[#3b82f6] hover:bg-[#2563eb] text-white"
+            >
+              Сохранить конфигурацию
+            </Button>
           </CardContent>
         </Card>
       )}
